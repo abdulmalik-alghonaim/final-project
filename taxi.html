@@ -1,0 +1,86 @@
+<html>
+<script src="http://maps.google.com/maps/api/js"></script>
+<div id="map" style="width:1024px; height:768px"></div>
+<script>
+
+var map;
+var markers = [];
+
+function getTaxiLocations(){
+	var data = 
+
+
+}
+
+
+function initialize(){
+	var latlng = new google.maps.LatLng(41.162142, -8.621953); //coordinates of the center of Porto, Portugal
+	var myOptions = {
+		zoom : 16,
+		center : latlng,
+		mapTypeId : google.maps.MapTypeId.ROADMAP
+	};
+  	map = new google.maps.Map(document.getElementById('map'), myOptions);
+  	addMarkers();
+
+// Adds markers to the map and into array
+function addMarkers(){
+
+var locations = getTaxiLocations();
+console.log(locations);
+
+
+//     Use forEach to loop through taxis.
+//     If taxi exist, move marker.
+//     If taxi does not exist, add marker.
+
+
+locations.vehicle.forEach(function(taxi){
+    var marker = getMarker(taxi.id);
+
+    if(marker){
+        moveMarker(marker, taxi);
+    }
+    else{
+        addMarker(taxi);
+    }
+})
+
+console.log(new Date());
+setTimeout(addMarkers,100); //loops and calls the code again every 0.1 second
+}
+function addMarker(taxi){
+	var marker = new google.maps.Marker({
+	  	position: new google.maps.LatLng(taxi.lat,taxi.lon),
+	    icon: { 
+	        path:google.maps.SymbolPath.CIRCLE,
+	        fillColor: 'rgba(' +  Math.floor(Math.random()*255) + ', ' +
+							Math.floor(Math.random()*255) + ', ' +
+							Math.floor(Math.random()*255) + ',  1)',
+	        fillOpacity: 1,
+	        scale:7,
+	        strokeWeight:1
+	    },
+		map: map,
+		title: taxi.id
+	});
+	markers.push(marker);
+}
+
+function moveMarker(marker,taxi) {
+    var newLatlng = new google.maps.LatLng(taxi.lat,taxi.lon);
+    marker.setPosition(newLatlng);
+}
+
+function getMarker(id){
+	var marker = markers.find(function(item){
+		return item.title === id;
+	});
+	return marker;
+}
+
+window.onload = init;
+
+</script>
+
+</html>
