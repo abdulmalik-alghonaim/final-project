@@ -1,14 +1,18 @@
 <html>
-<!-- load google maps and taxi data -->
-<script src="http://maps.google.com/maps/api/js"></script>
-<div id="map" style="width:1024px; height:768px"></div>
-<script src="train3.json" ></script>
+<body>
+	<h2>EasyCab: Porto, Portugal</h2>
+	<!-- load google maps and taxi data -->
+	<script src="http://maps.google.com/maps/api/js"></script>
+	<button id="Start Taxi Trajectories">Show Map</button>
+	<div id="map" style="width:1024px; height:768px"></div>
+	<script src="train3.json" ></script>
 <script>
 
 var map;
 var markers = [];
 var points=[];
 var max_length=0;
+
 function getTaxiLocations(){
 	for (i=0;i<10;i++){
 		index = Math.floor(Math.random()*data.length());
@@ -20,14 +24,22 @@ function getTaxiLocations(){
 
 
 function initialize(){
-	var latlng = new google.maps.LatLng(41.162142, -8.621953); //coordinates of the center of Porto, Portugal
-	var myOptions = {
+	//Add the event listener after Google Mpas and window is loaded
+    $('#show-map').click(function () {
+        var latlng = new google.maps.LatLng(41.162142, -8.621953); //coordinates of the center of Porto, Portugal
+		var myOptions = {
 		zoom : 16,
 		center : latlng,
 		mapTypeId : google.maps.MapTypeId.ROADMAP
 	};
-  	map = new google.maps.Map(document.getElementById('map'), myOptions);
-  	addMarkers();
+	map = new google.maps.Map(document.getElementById('map'), myOptions);
+	addMarkers();
+	
+    });
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+
+
 
 // Adds markers to the map and into array
 var locations = getTaxiLocations();
@@ -41,13 +53,17 @@ function addMarkers(){
 //     Use forEach to loop through taxis.
 //     If taxi exists, move marker.
 //     If taxi does not exist, add marker.
-	locations.forEach(function(taxi,index){
+		locations.forEach(function(taxi,index){
     	//var marker = getMarker(taxi.id);
     	if(counter === 0){
         	addMarker(taxi,index);
     	}
     	else{
-        	moveMarker(taxi,index);
+			if (counter<taxi.POLYLINE.length){
+        	moveMarker(taxi,index);}
+			else{
+				markers[index].icon.fillColor = 'ragba(0,0,0,1)'
+			}
     	}
 })
 
@@ -77,22 +93,22 @@ function moveMarker(taxi,index) {
     markers[index].setPosition(newLatlng);
 };
 
-function getMarker(id){
+// function getMarker(id){
 
 
-points.forEach(function(val){
-	val.POLYLINE.forEach(()=>{
+// points.forEach(function(val){
+// 	val.POLYLINE.forEach(()=>{
 
-	});
-})
-	points.POLYLINE.
-	var marker = markers.find(function(item){
-		return item.title === id;
-	});
-	return marker;
-};
+// 	});
+// })
+// 	//points.POLYLINE.
+// 	var marker = markers.find(function(item){
+// 		return item.title === id;
+// 	});
+// 	return marker;
+// };
 
-window.onload = init;
+//window.onload = init;
 
 </script>
 
