@@ -26,11 +26,11 @@ var data = [{"TIMESTAMP":"1372636858","POLYLINE":[[-8.618643,41.141412],[-8.6184
 
 var map;
 var markers = [];
-var points=[];
-var counter = 0;
 var max_length=0;
+var locations =[];
 
 function getTaxiLocations(){
+	var points=[];
 	for (i=0;i<10;i++){
 		index = Math.floor(Math.random()*data.length);
 		selection = data[index];
@@ -39,56 +39,17 @@ function getTaxiLocations(){
 	return points;
 }
 
-
-function initialize(){
-	//Add the event listener after Google Maps and window is loaded
-    $('#show-map').click(function () {
-        var latlng = new google.maps.LatLng(41.162142, -8.621953); //coordinates of the center of Porto, Portugal
-		var myOptions = {
-		zoom : 16,
-		center : latlng,
-		mapTypeId : google.maps.MapTypeId.ROADMAP
-	};
-	map = new google.maps.Map(document.getElementById('map'), myOptions);
-	// Adds markers to the map and into array
-	var locations = getTaxiLocations();
-	locations.forEach((point)=>{
-		if (point.POLYLINE.length>max_length){max_length=point.POLYLINE.length}
+function getMarker(index){
+	var marker = markers.find(function(taxi){
+		return item.title === index;
 	});
-	addMarkers(locations);
-})};
-google.maps.event.addDomListener(window, 'load', initialize);
+	return marker;
+}
+function moveMarker(taxi,index,counter) {
+    var newLatlng = new google.maps.LatLng(taxi.POLYLINE[counter][1],taxi.POLYLINE[counter][0]);
+    getMarker(index).setPosition(newLatlng);
+};
 
-
-// Adds markers to the map and into array
-// var locations = getTaxiLocations();
-// locations.forEach((point)=>{
-// 	if (point.POLYLINE.length>max_length){max_length=point.POLYLINE.length}
-// });
-
-function addMarkers(locations){
-	if (counter <= max_length){
-		counter++;
-//     Use forEach to loop through taxis.
-//     If taxi exists, move marker.
-//	   If taxi does not exist, add marker.
-		locations.forEach(function(taxi,index){
-    	//var marker = getMarker(taxi.id);
-    	if(counter === 0){
-        	addMarker(taxi,index);
-    	}
-    	else{
-			if (counter<taxi.POLYLINE.length){
-        	moveMarker(taxi,index,counter);}
-			else{
-				markers[index].icon.fillColor = 'ragba(0,0,0,1)'
-			}
-    	}
-})
-
-console.log(new Date());
-setTimeout(addMarkers,100); //loops and calls the code again every 0.1 second
-}};
 function addMarker(taxi){
 	var marker = new google.maps.Marker({
 	  	position: new google.maps.LatLng(taxi.POLYLINE[0][1],taxi.POLYLINE[0][0]),
@@ -98,7 +59,7 @@ function addMarker(taxi){
 							Math.floor(Math.random()*255) + ', ' +
 							Math.floor(Math.random()*255) + ',  1)',
 	        fillOpacity: 1,
-	        scale:7,
+	        scale:10,
 	        strokeWeight:1
 	    },
 		map: map,
@@ -106,26 +67,49 @@ function addMarker(taxi){
 	});
 	markers.push(marker);
 };
-
-function moveMarker(taxi,index) {
-    var newLatlng = new google.maps.LatLng(taxi.POLYLINE[counter][1],taxi.POLYLINE[counter][0]);
-    markers[index].setPosition(newLatlng);
+function addMarkers(locations){
+	for(var counter=0; counter <= max_length;counter++){
+//     Use forEach to loop through taxis.
+//     If taxi exists, move marker.
+//	   If taxi does not exist, add marker.
+		locations.forEach(function(taxi,index){
+    	//var marker = getMarker(taxi.id);
+    		if(counter === 0){
+        		addMarker(taxi,index);
+    		}
+    		else{
+				if (counter<taxi.POLYLINE.length){
+        		moveMarker(taxi,index,counter);}
+				else{
+					markers[index].icon.fillColor = 'ragba(0,0,0,1)'
+					}
+    		}
+		})
+		setTimeout(addMarkers,1); //loops and calls the code again every 0.1 second
+	}
+	map = 0;
 };
 
-// function getMarker(id){
 
-
-// points.forEach(function(val){
-// val.POLYLINE.forEach(()=>{
-
-
-function getMarker(id){
-	var marker = markers.find(function(item){
-		return item.title === id;
+function initialize(){
+	//Add the event listener after Google Maps and window is loaded
+    $('#show-map').click(function () {
+        var latlng = new google.maps.LatLng(41.162142, -8.621953); //coordinates of the center of Porto, Portugal
+		var myOptions = {
+		zoom : 14,
+		center : latlng,
+		mapTypeId : google.maps.MapTypeId.ROADMAP
+	};
+	map = new google.maps.Map(document.getElementById('map'), myOptions);
+	// Adds markers to the map and into array
+	locations = getTaxiLocations();
+	locations.forEach((point)=>{
+		if (point.POLYLINE.length>max_length){max_length=point.POLYLINE.length}
 	});
-	return marker;
-}
+	addMarkers(locations);
+})};
 
+google.maps.event.addDomListener(window, 'load', initialize);
 window.onload = initialize;
 
 </script>
