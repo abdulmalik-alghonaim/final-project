@@ -41,7 +41,7 @@ function getTaxiLocations(){
 
 function getMarker(index){
 	var marker = markers.find(function(taxi){
-		return item.title === index;
+		return taxi.title === index;
 	});
 	return marker;
 }
@@ -72,7 +72,7 @@ function addMarkers(locations){
 //     Use forEach to loop through taxis.
 //     If taxi exists, move marker.
 //	   If taxi does not exist, add marker.
-		locations.forEach(function(taxi,index){
+		locations.forEach((taxi,index)=>{
     	//var marker = getMarker(taxi.id);
     		if(counter === 0){
         		addMarker(taxi,index);
@@ -81,7 +81,7 @@ function addMarkers(locations){
 				if (counter<taxi.POLYLINE.length){
         		moveMarker(taxi,index,counter);}
 				else{
-					markers[index].icon.fillColor = 'ragba(0,0,0,1)'
+					getMarker(index).icon.fillColor = 'ragba(0,0,0,1)'
 					}
     		}
 		})
@@ -110,7 +110,7 @@ function initialize(){
 })};
 
 google.maps.event.addDomListener(window, 'load', initialize);
-window.onload = initialize;
+//window.onload = initialize;
 
 </script>
 </body>
